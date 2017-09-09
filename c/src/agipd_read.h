@@ -1,9 +1,6 @@
 //
-//  agipd_h5.hpp
-//  agipd-reader
-//
 //  Created by Anton Barty on 24/8/17.
-//  Copyright © 2017 Anton Barty. All rights reserved.
+//	Distributed under the GPLv3 license
 //
 
 #ifndef agipd_h5_hpp

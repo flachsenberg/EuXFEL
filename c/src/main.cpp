@@ -1,9 +1,6 @@
 //
-//  main.cpp
-//  agipd
-//
 //  Created by Anton Barty on 24/8/17.
-//  Copyright © 2017 Anton Barty. All rights reserved.
+//	Distributed under the GPLv3 license
 //
 
 #include <stdio.h>
