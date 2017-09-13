@@ -65,7 +65,7 @@ private:
 private:
 	void*		checkAllocRead(char[], long, hid_t, size_t);
 	void*		checkAllocReadHyperslab(char[], int, hsize_t*, hsize_t*, hid_t, size_t);
-	void		readFrameRAW(long);
+	void		readFrameRawOrCalib(long frameNum, bool isRaw);
 };
 
 
@@ -87,13 +87,13 @@ public:
 	void open(char[]);
 	void close(void);
 	void readFrame(long);
-
+	void maxAllFrames();
 	
 public:
 	// Data slab dimensions
 	long		nframes;
 	
-	// Dimenations and of the composite data slab
+	// Dimensions and of the composite data slab
 	long		dims[2];
 	long		n0;
 	long		n1;

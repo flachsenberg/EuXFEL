@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		120DBF7D1F69AF7100C46E75 /* PNGFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DBF7B1F69AF7100C46E75 /* PNGFile.cpp */; };
+		120DBF811F69AFDD00C46E75 /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DBF7E1F69AFDD00C46E75 /* TextManager.cpp */; };
 		4D2113FB1F4ED6090080F5AE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D2113FA1F4ED6090080F5AE /* main.cpp */; };
 		4D2113FE1F4ED6530080F5AE /* agipd_module_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D2113FC1F4ED6530080F5AE /* agipd_module_reader.cpp */; };
-		4D2113FF1F4ED8000080F5AE /* agipd-reader in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4D2113F01F4ED5E90080F5AE /* agipd-reader */; };
 		4D26C3451F628EDA00D2D8E0 /* agipd_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D26C3441F628EDA00D2D8E0 /* agipd_reader.cpp */; };
 /* End PBXBuildFile section */
 
@@ -17,16 +18,20 @@
 		4D2113EE1F4ED5E90080F5AE /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = /data/work/2017/bin;
-			dstSubfolderSpec = 0;
+			dstPath = "";
+			dstSubfolderSpec = 16;
 			files = (
-				4D2113FF1F4ED8000080F5AE /* agipd-reader in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		120DBF7B1F69AF7100C46E75 /* PNGFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PNGFile.cpp; path = src/PNGFile.cpp; sourceTree = SOURCE_ROOT; };
+		120DBF7C1F69AF7100C46E75 /* PNGFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PNGFile.h; path = src/PNGFile.h; sourceTree = SOURCE_ROOT; };
+		120DBF7E1F69AFDD00C46E75 /* TextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextManager.cpp; path = src/TextManager.cpp; sourceTree = SOURCE_ROOT; };
+		120DBF7F1F69AFDD00C46E75 /* TextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextManager.h; path = src/TextManager.h; sourceTree = SOURCE_ROOT; };
+		120DBF801F69AFDD00C46E75 /* font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = font.h; path = src/font.h; sourceTree = SOURCE_ROOT; };
 		4D2113F01F4ED5E90080F5AE /* agipd-reader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "agipd-reader"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D2113FA1F4ED6090080F5AE /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		4D2113FC1F4ED6530080F5AE /* agipd_module_reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = agipd_module_reader.cpp; path = src/agipd_module_reader.cpp; sourceTree = SOURCE_ROOT; };
@@ -68,6 +73,11 @@
 				4D2113FD1F4ED6530080F5AE /* agipd_read.h */,
 				4D26C3441F628EDA00D2D8E0 /* agipd_reader.cpp */,
 				4D2113FC1F4ED6530080F5AE /* agipd_module_reader.cpp */,
+				120DBF7E1F69AFDD00C46E75 /* TextManager.cpp */,
+				120DBF7F1F69AFDD00C46E75 /* TextManager.h */,
+				120DBF801F69AFDD00C46E75 /* font.h */,
+				120DBF7B1F69AF7100C46E75 /* PNGFile.cpp */,
+				120DBF7C1F69AF7100C46E75 /* PNGFile.h */,
 			);
 			path = agipd;
 			sourceTree = "<group>";
@@ -130,6 +140,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D2113FB1F4ED6090080F5AE /* main.cpp in Sources */,
+				120DBF7D1F69AF7100C46E75 /* PNGFile.cpp in Sources */,
+				120DBF811F69AFDD00C46E75 /* TextManager.cpp in Sources */,
 				4D26C3451F628EDA00D2D8E0 /* agipd_reader.cpp in Sources */,
 				4D2113FE1F4ED6530080F5AE /* agipd_module_reader.cpp in Sources */,
 			);
@@ -250,6 +262,15 @@
 		4D2113F81F4ED5E90080F5AE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = (
+					"-lc",
+					"-lhdf5",
+					"-lhdf5_hl",
+					"-lgcc_s.1",
+					"-lz",
+					"-lpng",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -257,6 +278,15 @@
 		4D2113F91F4ED5E90080F5AE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = (
+					"-lc",
+					"-lhdf5",
+					"-lhdf5_hl",
+					"-lgcc_s.1",
+					"-lz",
+					"-lpng",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

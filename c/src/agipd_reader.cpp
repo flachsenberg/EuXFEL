@@ -9,7 +9,8 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
-
+#include <math.h>
+#include "PNGFile.h"
 #include "agipd_read.h"
 
 
@@ -151,9 +152,9 @@ void cAgipdReader::open(char *baseFilename){
 	// Pointer to the data location for each module
 	// (for copying module data and for those who want to look at the data as a stack of panels)
 	long offset;
-	for(long i=0; i<nAGIPDmodules; i++) {
+	for (long i=0; i < nAGIPDmodules; i++) {
 		offset = modulenn;
-		pdata[i] = data + i*offset;
+		pdata[i] = data + i * offset;
 		pgain[i] = digitalGain + i*offset;
 		pmask[i] = mask + i*offset;
 	}
@@ -217,18 +218,74 @@ void cAgipdReader::readFrame(long frameNum){
 		memcpy(pgain[i], module[i].digitalGain, modulenn*sizeof(uint16_t));
 		
 		
-		// Mark the entire panel as bad if it's status is nonzero
-		if(module[i].statusID == 0) {
-			memset(pmask[i], 0, modulenn*sizeof(uint16_t));
-		}
-		else {
-			memset(pmask[i], module[i].statusID, modulenn*sizeof(uint16_t));
-		}
+		// Set entire panel mask to whatever the status is.
+		memset(pmask[i], module[i].statusID, modulenn*sizeof(uint16_t));
 	}
 
 	// These are updated only after readFrame is called !!
 	trainID = module[0].trainID;
 	pulseID = module[0].pulseID;
-	
+}
 
+void cAgipdReader::maxAllFrames(void)
+{
+	// Array for storying sum of all frames
+	uint16_t *sumdata;
+
+	std::cout << "Writing out max of all frames..." << std::endl;
+
+	sumdata = (uint16_t*) malloc(nn*sizeof(uint16_t));
+	memset(sumdata, 0, sizeof(uint16_t)*nn);
+
+	for (int i = 0; i < nframes && i < 1000; i++)
+	{
+		std::cout << "Reading frame " << i << "..." << std::endl;
+		readFrame(i);
+
+		for (int j = 0; j < nn; j++)
+		{
+			if (data[j] > sumdata[j])
+			{
+				sumdata[j] = data[j];
+			}
+		}
+	}
+
+	double sum = 0;
+	double sumSq = 0;
+
+	for (int j = 0; j < nn; j++)
+	{
+		sum += sumdata[j];
+		sumSq += sumdata[j] * sumdata[j];
+	}
+
+	double mean = sum / nn;
+	double stdev = sqrt(sumSq / nn - mean * mean);
+	double minBlack = mean - stdev * 2;
+	double maxBlack = mean + stdev * 2;
+
+	int width = (int)n0;
+	int height = (int)n1;
+
+	PNGFile png = PNGFile("max_agipd_file.png", (int)width, (int)height);
+
+	for (int i = 0; i < width; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			long index = j * width + i;
+			double value = sumdata[index];
+			double percentage = (value - minBlack) / (maxBlack - minBlack);
+			if (percentage > 1) percentage = 1;
+			png_byte greyness = percentage * 255;
+
+			png.setPixelColour(i, j, greyness, greyness, greyness);
+		}
+	}
+
+	png.writeImageOutput();
+
+	std::cout << "Pixel stdev: " << stdev << std::endl;
+	std::cout << "Mean pixel value: " << mean << std::endl;
 }

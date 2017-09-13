@@ -446,8 +446,13 @@ void cAgipdModuleReader::readFrame(long frameNum){
 	currentFrame = frameNum;
 	
 	// At the moment we only read RAW data files
-	if(rawDetectorData) {
-		readFrameRAW(frameNum);
+	if (rawDetectorData)
+	{
+		readFrameRawOrCalib(frameNum, true);
+	}
+	else
+	{
+		readFrameRawOrCalib(frameNum, false);
 	}
 }
 // cAgipdModuleReader::readFrame
@@ -456,7 +461,8 @@ void cAgipdModuleReader::readFrame(long frameNum){
 /*
  *	Read one frame of data from RAW files
  */
-void cAgipdModuleReader::readFrameRAW(long frameNum){
+void cAgipdModuleReader::readFrameRawOrCalib(long frameNum, bool isRaw)
+{
 
 	// Define hyperslab in RAW data file
 	hsize_t     slab_start[4];
@@ -469,6 +475,12 @@ void cAgipdModuleReader::readFrameRAW(long frameNum){
 	slab_size[1] = 1;
 	slab_size[2] = n1;
 	slab_size[3] = n0;
+
+	if (!isRaw)
+	{
+		slab_size[1] = n1;
+		slab_size[2] = n0;
+	}
 
 
 	// Free existing memory
@@ -483,8 +495,7 @@ void cAgipdModuleReader::readFrameRAW(long frameNum){
 	// Digital gain is in the second dimension (at least in the current layout)
 	slab_start[1] = 0;
 	digitalGain = (uint16_t*) checkAllocReadHyperslab(h5_image_data_field, 4, slab_start, slab_size, H5T_STD_U16LE, sizeof(uint16_t));
-	
-    
+
     // Update timestamp, status bits and other stuff
     trainID = trainIDlist[frameNum];
     pulseID = pulseIDlist[frameNum];
@@ -492,6 +503,4 @@ void cAgipdModuleReader::readFrameRAW(long frameNum){
     statusID = statusIDlist[frameNum];
 
 };
-// cAgipdModuleReader::readFrameRAW
-
 
