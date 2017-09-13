@@ -313,6 +313,8 @@ void PNGFile::moveCoordRelative(int *x, int *y)
     {
         *x += centreX;
         *y += centreY;
+
+		*y = height - *y;
         return;
     }
     
