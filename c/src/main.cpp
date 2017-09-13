@@ -23,7 +23,6 @@ void parse_config(int, char *[], tGlobal *);
 
 
 //static char testfile[]="R0126-AGG01-S00002.h5";
-static char testfile[]="RAW-R0283-AGIPD00-S00000.h5";
 
 
 
@@ -34,7 +33,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "AGIPD file reader test\n";
 	parse_config(argc, argv, &global);
 	
-	
+	static char testfile[]="RAW-R0283-AGIPD00-S00000.h5";
 	
 	cAgipdReader agipd;
 	agipd.verbose=1;
