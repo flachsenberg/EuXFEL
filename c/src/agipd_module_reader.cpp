@@ -62,6 +62,21 @@ static char h5_cellId_suffix[] = "cellId";
 static char h5_image_data_suffix[] = "data";
 static char h5_image_status_suffix[] = "status";
 
+std::string get_basename(const std::string& filepath) {
+	#ifdef _WIN32
+ 	const std::string separators = "\\/";
+	#else
+	const std::string separators = "/";
+	#endif
+	std::size_t pos = filepath.find_last_of(separators);
+	if (pos == std::string::npos) {
+		return filepath;
+	}
+	else {
+		return filepath.substr(pos + 1, filepath.length() - pos - 1);
+	}
+}
+
 cAgipdModuleReader::cAgipdModuleReader(void){
 	h5_file_id = 0;
 	pulseIDlist = NULL;
@@ -160,7 +175,7 @@ void cAgipdModuleReader::open(char filename[], int mNum){
 	}
 
 	// filename starts with 'RAW_' we have raw data
-	if(cAgipdModuleReader::filename.substr(0,3) == "RAW") {
+	if(get_basename(cAgipdModuleReader::filename).substr(0,3) == "RAW") {
 		std::cout << "\tData is RAW detector data" << std::endl;
 		rawDetectorData = true;
 	}
@@ -386,7 +401,7 @@ void* cAgipdModuleReader::checkAllocReadHyperslab(char fieldName[], int ndims, h
 	
 	// Checks
 	if(h5_ndims != ndims) {
-		std::cout << "\tcheckAllocReadHyperslab error: dimensions of data sets do not match requested dimensions (oops)\n";
+		std::cout << "\tcheckAllocReadHyperslab error: dimensions of data sets do not match requested dimensions (oops): " << h5_ndims << " vs. " << ndims << std::endl;
 		H5Dclose(dataset_id);
 		H5Sclose (dataspace_id);
 		return NULL;

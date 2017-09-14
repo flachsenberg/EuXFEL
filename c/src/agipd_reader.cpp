@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <string.h>
 #include <vector>
 #include <math.h>
 #include "PNGFile.h"
@@ -197,7 +198,7 @@ void cAgipdReader::open(char *baseFilename){
 	}
 
 	// Allocate memory for data and masks
-	data = (float*) malloc(nn*sizeof(uint16_t));
+	data = (float*) malloc(nn*sizeof(float));
 	mask = (uint16_t*) malloc(nn*sizeof(uint16_t));
 	digitalGain = (uint16_t*) malloc(nn*sizeof(uint16_t));
 	
@@ -227,11 +228,22 @@ void cAgipdReader::close(void){
 		std::cout << "\tClosing " << moduleFilename[i] << std::endl;
 		module[i].close();
 	}
+
+	std::cout << "closed modules" << std::endl;
 	
 	// Clean up memory
-	free(data);
-	free(mask);
-	free(digitalGain);
+	if (data != NULL) {
+		free(data);
+		std::cout << "free'd data" << std::endl;
+	}
+	if (mask != NULL) {
+		free(mask);
+		std::cout << "free'd mask" << std::endl;
+	}
+	if (digitalGain != NULL) {
+		free(digitalGain);
+		std::cout << "free'd digitalGain" << std::endl;
+	}
 	data = NULL;
 	mask = NULL;
 	digitalGain = NULL;
