@@ -169,9 +169,9 @@ void cAgipdReader::open(char *baseFilename){
 
 	for(long i=1; i<nAGIPDmodules; i++)
 	{
-		for (long k = minTrain; k < maxTrain; k++)
+		for (long k = minTrain; k <= maxTrain; k++)
 		{
-			for (long j = minPulse; j < maxPulse; j++)
+			for (long j = minPulse; j <= maxPulse; j++)
 			{
 				TrainPulsePair train2Pulse = std::make_pair(k, j);
 
@@ -254,7 +254,7 @@ void cAgipdReader::close(void){
 bool cAgipdReader::nextFrame()
 {
 	currentPulse++;
-	if (currentPulse >= maxPulse)
+	if (currentPulse > maxPulse)
 	{
 		currentPulse = minPulse;
 		currentTrain++;
@@ -271,12 +271,12 @@ void cAgipdReader::resetCurrentFrame()
 
 bool cAgipdReader::readFrame(long trainID, long pulseID)
 {
-	if (trainID < minTrain || trainID >= maxTrain) {
+	if (trainID < minTrain || trainID > maxTrain) {
 		std::cout << "\treadFrame::trainID out of bounds " << trainID << std::endl;
 		return false;
 	}
 
-	if (pulseID < minPulse || pulseID >= maxPulse) {
+	if (pulseID < minPulse || pulseID > maxPulse) {
 		std::cout << "\treadFrame::pulseID out of bounds " << pulseID << std::endl;
 		return false;
 	}
