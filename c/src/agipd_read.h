@@ -12,10 +12,20 @@
 #include <hdf5.h>
 #include <hdf5_hl.h>
 #include <map>
+#include <sstream>
 
 typedef std::pair<long, int> TrainPulsePair; // pairs of trains and pulses
 typedef std::pair<TrainPulsePair, int> TrainPulseModulePair; // pairs of train-pulses and module numbers
 typedef std::map<TrainPulseModulePair, long> TrainPulseMap; // map of train-pulse & module number to frame num.
+
+inline std::string i_to_str(int val)
+{
+	std::ostringstream ss;
+	ss << val;
+	std::string temp = ss.str();
+
+	return temp;
+}
 
 /*
  *	This class handles reading and writing for one AGIPD module file
@@ -87,9 +97,9 @@ private:
 class cAgipdReader {
 
 public:
-    static const int nAGIPDmodules = 16;
+	static const int nAGIPDmodules = 16;
 
-    
+
 public:
 	cAgipdReader();
 	~cAgipdReader();

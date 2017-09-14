@@ -13,13 +13,17 @@
 #include "PNGFile.h"
 #include "agipd_read.h"
 
-
-
 cAgipdReader::cAgipdReader(void){
 	data = NULL;
 	mask = NULL;
 	digitalGain = NULL;
 	rawDetectorData = true;
+	currentTrain = 0;
+	currentPulse = 0;
+	minTrain = 0;
+	maxTrain = 0;
+	minPulse = 0;
+	maxPulse = 0;
 	verbose = 0;
 };
 
@@ -131,7 +135,7 @@ void cAgipdReader::open(char *baseFilename){
 	}
 
 	std::cout << "\tChecking for mismatched timestamps" << std::endl;
-	for(long i=1; i<nAGIPDmodules; i++)
+	for(long i=0; i<nAGIPDmodules; i++)
 	{
 		if (moduleOK[i] == false)
 			continue;
@@ -155,12 +159,12 @@ void cAgipdReader::open(char *baseFilename){
 		}
 	}
 
-		currentTrain = minTrain;
+	currentTrain = minTrain;
 
-		std::cout << "Trains extend from IDs " << minTrain << " to " << maxTrain << std::endl;
-		std::cout << "Current train set to minimum, " << minTrain << std::endl;
-		std::cout << "Pulses extend from IDs " << minPulse << " to " << maxPulse << std::endl;
-		std::cout << "Current pulse set to minimum, " << minPulse << std::endl;
+	std::cout << "Trains extend from IDs " << minTrain << " to " << maxTrain << std::endl;
+	std::cout << "Current train set to minimum, " << minTrain << std::endl;
+	std::cout << "Pulses extend from IDs " << minPulse << " to " << maxPulse << std::endl;
+	std::cout << "Current pulse set to minimum, " << minPulse << std::endl;
 
 	for(long i=1; i<nAGIPDmodules; i++)
 	{
@@ -315,6 +319,10 @@ void cAgipdReader::maxAllFrames(void)
 	sumdata = (float*) malloc(nn*sizeof(float));
 	memset(sumdata, 0, sizeof(float)*nn);
 
+	nextFrame();
+	std::cout << "First pixel is: " << data[0] << std::endl;
+	resetCurrentFrame();
+
 	while (nextFrame())
 	{
 		for (int j = 0; j < nn; j++)
@@ -337,8 +345,8 @@ void cAgipdReader::maxAllFrames(void)
 
 	double mean = sum / nn;
 	double stdev = sqrt(sumSq / nn - mean * mean);
-	double minBlack = mean - stdev * 2;
-	double maxBlack = mean + stdev * 2;
+	double minBlack = mean - stdev * 1.5;
+	double maxBlack = mean + stdev * 1.5;
 
 	const int one = 128;
 	const int xBump = 0;
@@ -403,6 +411,38 @@ void cAgipdReader::maxAllFrames(void)
 		if (xDir == -1) cornerX += modulen[1];
 		if (yDir == -1) cornerY += modulen[0];
 
+		int rawCornerX = 0;
+		int rawCornerY = n * modulen[1];
+
+		std::cout << "agipd" << i_to_str(n) << "/min_fs = " + i_to_str(rawCornerX) << std::endl;
+		std::cout << "agipd" << i_to_str(n) << "/min_ss = " + i_to_str(rawCornerY) << std::endl;
+		std::cout << "agipd" << i_to_str(n) << "/max_fs = " + i_to_str(rawCornerX + n0) << std::endl;
+		std::cout << "agipd" << i_to_str(n) << "/max_ss = " + i_to_str(rawCornerY + modulen[1]) << std::endl;
+		std::cout << "agipd" << i_to_str(n) << "/fs = ";
+		if (xDir == -1)
+		{
+			std::cout << "-1.000x -1.000y" << std::endl;
+		}
+		else
+		{
+			std::cout << "+1.000x +1.000y" << std::endl;
+		}
+
+		std::cout << "agipd" << i_to_str(n) << "/ss = ";
+
+		if (yDir == -1)
+		{
+			std::cout << "-1.000x -1.000y" << std::endl;
+		}
+		else
+		{
+			std::cout << "+1.000x +1.000y" << std::endl;
+		}
+
+
+		std::cout << "agipd" << i_to_str(n) << "/corner_x = " + i_to_str(cornerX) << std::endl;
+		std::cout << "agipd" << i_to_str(n) << "/corner_y = " + i_to_str(cornerY) << std::endl;
+
 		for (int i = 0; i < modulen[0]; i++)
 		{
 			for (int j = 0; j < modulen[1]; j++)
@@ -411,6 +451,8 @@ void cAgipdReader::maxAllFrames(void)
 				double value = sumPointer[index];
 				double percentage = (value - minBlack) / (maxBlack - minBlack);
 				if (percentage > 1) percentage = 1;
+				if (percentage < 0) percentage = 0;
+				percentage = 1 - percentage;
 				png_byte greyness = percentage * 255;
 
 
